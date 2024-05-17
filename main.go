@@ -1,38 +1,38 @@
 package format_
 
 import (
-	"encoding/json"
-	"log"
+	"encoding/xml"
+	"fmt"
 	"os"
-	"sort"
 )
 
-type animals struct {
-	Name  string `json:"name"`
-	Age   int    `json:"age"`
-	Email string `json:"email"`
+type Patient struct {
+	XMLName xml.Name `xml:"Patient"`
+	Name    string   `xml:"Name"`
+	Age     int      `xml:"Age"`
+	Email   string   `xml:"Email"`
+}
+
+type Patients struct {
+	XMLName  xml.Name  `xml:"patients"`
+	Patients []Patient `xml:"Patient"`
 }
 
 func Do(path, dir string) error {
-	file, err := readJSON(path)
+	p, err := readFile(path)
 	if err != nil {
 		return err
 	}
-	log.Println(file)
-
-	sort.Slice(file, func(i, j int) bool {
-		return file[i].Age < file[j].Age
-	})
 
 	f, err := os.CreateTemp(dir, "new_file-")
 	if err != nil {
 		return err
 	}
-	err = json.NewEncoder(f).Encode(file)
-	if err != nil {
-		return err
-	}
-	err = f.Close()
+	defer f.Close()
+
+	enc := xml.NewEncoder(f)
+	enc.Indent("", "    ")
+	err = enc.Encode(p)
 	if err != nil {
 		return err
 	}
@@ -40,22 +40,20 @@ func Do(path, dir string) error {
 	return nil
 }
 
-func readJSON(path string) ([]animals, error) {
-	res := make([]animals, 0, 6)
+func readFile(path string) (Patients, error) {
+	var res Patients
 
-	f, err := os.Open(path)
+	file, err := os.Open(path)
 	if err != nil {
+		fmt.Println("Ошибка открытия файла:", err)
 		return res, err
 	}
-	defer f.Close()
-	dec := json.NewDecoder(f)
-	for dec.More() {
-		var a animals
-		err := dec.Decode(&a)
-		if err != nil {
-			return res, err
-		}
-		res = append(res, a)
+	defer file.Close()
+
+	err = xml.NewDecoder(file).Decode(&res)
+	if err != nil {
+		fmt.Println("Ошибка декодирования XML:", err)
+		return res, err
 	}
 
 	return res, nil
