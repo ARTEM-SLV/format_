@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"log"
 	"os"
+	"sort"
 )
 
 type animals struct {
@@ -13,11 +14,15 @@ type animals struct {
 }
 
 func Do(path, dir string) error {
-	file, err := readFile(path)
+	file, err := readJSON(path)
 	if err != nil {
 		return err
 	}
 	log.Println(file)
+
+	sort.Slice(file, func(i, j int) bool {
+		return file[i].Age < file[j].Age
+	})
 
 	f, err := os.CreateTemp(dir, "new_file-")
 	if err != nil {
@@ -35,16 +40,14 @@ func Do(path, dir string) error {
 	return nil
 }
 
-func readFile(path string) ([]animals, error) {
-	res := make([]animals, 0, 3)
+func readJSON(path string) ([]animals, error) {
+	res := make([]animals, 0, 6)
 
 	f, err := os.Open(path)
 	if err != nil {
 		return res, err
 	}
-
 	defer f.Close()
-
 	dec := json.NewDecoder(f)
 	for dec.More() {
 		var a animals
