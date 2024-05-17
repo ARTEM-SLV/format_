@@ -24,7 +24,7 @@ func Do(path, dir string) error {
 		return err
 	}
 
-	f, err := os.CreateTemp(dir, "new_file-")
+	f, err := os.CreateTemp(dir, "xml-v2.0.0-")
 	if err != nil {
 		return err
 	}
