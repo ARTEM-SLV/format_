@@ -24,7 +24,7 @@ func Do(path, dir string) error {
 		return file[i].Age < file[j].Age
 	})
 
-	f, err := os.CreateTemp(dir, "new_file-")
+	f, err := os.CreateTemp(dir, "json-v1.1.0-")
 	if err != nil {
 		return err
 	}
