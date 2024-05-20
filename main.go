@@ -4,6 +4,7 @@ import (
 	"encoding/xml"
 	"fmt"
 	"os"
+	"sort"
 )
 
 type Patient struct {
@@ -19,23 +20,30 @@ type Patients struct {
 }
 
 func Do(path, dir string) error {
-	p, err := readFile(path)
+	p, err := readFile(`E:\Go\Go-Lessons\Lesson_13\13_5\animals.xml`)
+	if err != nil {
+		fmt.Println("Ошибка открытия файла:", err)
+		return err
+	}
+	fmt.Println(p)
+
+	// Сортируем пациентов по возрасту
+	sort.Slice(p.Patients, func(i, j int) bool {
+		return p.Patients[i].Age < p.Patients[j].Age
+	})
+	fmt.Println(p)
+
+	f, err := os.CreateTemp(`E:\Go\Go-Lessons\Lesson_13\13_5\`, "xml-v2.1.0-")
 	if err != nil {
 		return err
 	}
-
-	f, err := os.CreateTemp(dir, "xml-v2.0.0-")
-	if err != nil {
-		return err
-	}
-	defer f.Close()
-
 	enc := xml.NewEncoder(f)
 	enc.Indent("", "    ")
 	err = enc.Encode(p)
 	if err != nil {
 		return err
 	}
+	f.Close()
 
 	return nil
 }
