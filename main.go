@@ -20,7 +20,7 @@ type Patients struct {
 }
 
 func Do(path, dir string) error {
-	p, err := readFile(`E:\Go\Go-Lessons\Lesson_13\13_5\animals.xml`)
+	p, err := readFile(path)
 	if err != nil {
 		fmt.Println("Ошибка открытия файла:", err)
 		return err
@@ -30,7 +30,7 @@ func Do(path, dir string) error {
 		return p.Patients[i].Age < p.Patients[j].Age
 	})
 
-	f, err := os.CreateTemp(`E:\Go\Go-Lessons\Lesson_13\13_5\`, "xml-v2.1.0-")
+	f, err := os.CreateTemp(dir, "xml-v2.1.0-")
 	if err != nil {
 		return err
 	}
