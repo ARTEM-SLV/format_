@@ -2,7 +2,6 @@ package format_
 
 import (
 	"encoding/json"
-	"log"
 	"os"
 	"sort"
 )
@@ -18,7 +17,6 @@ func Do(path, dir string) error {
 	if err != nil {
 		return err
 	}
-	log.Println(file)
 
 	sort.Slice(file, func(i, j int) bool {
 		return file[i].Age < file[j].Age
