@@ -25,13 +25,10 @@ func Do(path, dir string) error {
 		fmt.Println("Ошибка открытия файла:", err)
 		return err
 	}
-	fmt.Println(p)
 
-	// Сортируем пациентов по возрасту
 	sort.Slice(p.Patients, func(i, j int) bool {
 		return p.Patients[i].Age < p.Patients[j].Age
 	})
-	fmt.Println(p)
 
 	f, err := os.CreateTemp(`E:\Go\Go-Lessons\Lesson_13\13_5\`, "xml-v2.1.0-")
 	if err != nil {
